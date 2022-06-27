@@ -5,4 +5,12 @@ actor Пользователь
 node admin_panel{
     database Django
 }
+
+node Database{
+    database Postgresql
+}
+
+Пользователь -down--> admin_panel
+Django -right-> Postgresql
+
 @enduml

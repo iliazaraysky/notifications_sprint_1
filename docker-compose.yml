@@ -1,8 +1,21 @@
 version: "3"
 
 services:
+  db:
+    image: postgres:13.6
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=postgres
+    env_file:
+      - .env
   admin-panel:
     build:
+      context: .
       dockerfile: admin_panel/Dockerfile
     restart: always
     container_name: admin-panel-notification
@@ -11,3 +24,9 @@ services:
       - media_value:/code/app/media/
     env_file:
       - ./admin_panel/.env
+    depends_on:
+      - db
+volumes:
+  postgres_data:
+  static_value:
+  media_value:
