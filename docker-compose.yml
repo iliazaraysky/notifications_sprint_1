@@ -1,39 +1,39 @@
 version: "3"
 
 services:
-#  admin-panel:
-#    build:
-#      context: .
-#      dockerfile: admin_panel/Dockerfile
-#    ports:
-#      - 8000:8000
-#    restart: always
-#    container_name: admin-panel-notification
-#    command: gunicorn admin_panel.wsgi:application --bind 0.0.0.0:8000
-#    volumes:
-#      - static_value:/code/app/static_files/
-#      - media_value:/code/app/media/
-#    env_file:
-#      - ./admin_panel/.env
-#    depends_on:
-#      - db
-#    networks:
-#      - notifications_networks
-#  db:
-#    image: postgres:13.6
-#    ports:
-#      - 5432:5432
-#    container_name: notifications-postgresql-database
-#    volumes:
-#      - postgres_data:/var/lib/postgresql/data/
-#    environment:
-#      POSTGRES_USER: postgres
-#      POSTGRES_PASSWORD: postgres
-#      POSTGRES_DB: postgres
-#    env_file:
-#      - .env
-#    networks:
-#      - notifications_networks
+  admin-panel:
+    build:
+      context: .
+      dockerfile: admin_panel/Dockerfile
+    ports:
+      - 8000:8000
+    restart: always
+    container_name: admin-panel-notification
+    command: gunicorn admin_panel.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - static_value:/code/app/static_files/
+      - media_value:/code/app/media/
+    env_file:
+      - ./admin_panel/.env
+    depends_on:
+      - db
+    networks:
+      - notifications_networks
+  db:
+    image: postgres:13.6
+    ports:
+      - 5432:5432
+    container_name: notifications-postgresql-database
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    env_file:
+      - .env
+    networks:
+      - notifications_networks
   fastapi:
     container_name: notifications-fastapi
     build:
@@ -43,7 +43,17 @@ services:
       - 8001:8001
     env_file:
       - .env
+    networks:
+      - notifications_networks
     restart: on-failure
+  rabbitmq:
+    container_name: notifications-rabbitmq
+    image: rabbitmq:management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - notifications_networks
 volumes:
   postgres_data:
   static_value:

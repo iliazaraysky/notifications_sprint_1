@@ -10,6 +10,16 @@ node Database{
     database Postgresql
 }
 
+node Worker{
+    database notifications_history
+}
+
+node Events {
+    database Cron
+    database Scheduler
+
+}
+
 Пользователь -down--> admin_panel
 Django -right-> Postgresql
 

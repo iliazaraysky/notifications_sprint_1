@@ -2,12 +2,12 @@
 
 echo "Делаем миграции базы данных"
 
-while ! python manage.py migrate  2>&1; do
+while ! python manage.py migrate --noinput 2>&1; do
    echo "Migration is in progress status"
    sleep 1
 done
 
-while ! python manage.py makemigrations  2>&1; do
+while ! python manage.py makemigrations --noinput 2>&1; do
    echo "Migration is in progress status"
    sleep 1
 done
@@ -21,7 +21,7 @@ done
 
 echo "Собираем статику"
 
-while ! python manage.py collectstatic 2>&1; do
+while ! python manage.py collectstatic --noinput 2>&1; do
    echo "Migration is in progress status"
    sleep 2
 done
