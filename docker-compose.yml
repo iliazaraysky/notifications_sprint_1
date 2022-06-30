@@ -19,6 +19,30 @@ services:
       - db
     networks:
       - notifications_networks
+  mongo-fastapi:
+    image: mongo:4.4.6
+    container_name: mongo-fastapi
+    ports:
+      - 27017:27017
+    restart: always
+    volumes:
+      - ./api/mongo:/mongo
+  auth:
+    build: ./auth
+    container_name: flask-auth-service
+    entrypoint: >
+      sh -c "python -m pytest -W ignore tests/
+             flask db upgrade
+             flask createsuperuser admin password123
+             gunicorn wsgi_app:app --bind :5000"
+    ports:
+      - 5000:5000
+    restart: on-failure
+    env_file:
+      - .env
+    depends_on:
+      - db-auth
+      - redis
   db:
     image: postgres:13.6
     ports:

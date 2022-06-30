@@ -2,6 +2,22 @@
 skinparam componentStyle uml2
 actor Пользователь
 
+node api_database {
+    database mongodb
+}
+
+node message_broker {
+    database RabbitMQ
+}
+
+node auth_service {
+    database Flask
+}
+
+node api_service {
+    database FastAPI
+}
+
 node admin_panel{
     database Django
 }
@@ -20,7 +36,12 @@ node Events {
 
 }
 
-Пользователь -down--> admin_panel
+Пользователь -down----> admin_panel
+Пользователь -down----> api_service
+api_service -down--> api_database
+api_service -right---> message_broker
+api_database -up--> api_service
+
 Django -right-> Postgresql
 
 @enduml

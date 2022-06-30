@@ -110,7 +110,6 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-ugc_api/venv
 
 
 # Spyder project settings
@@ -147,18 +146,8 @@ dmypy.json
 .history/
 
 .mypy_cache
-/api/reports
-/reports
-/api/mongo
 
 # папки со статикой и медиа
 static/
 posts/static/
 media/
-lesson_assignments/apache_spark/data/bj/images
-lesson_assignments/apache_spark/data/breyers/images
-lesson_assignments/apache_spark/data/combined/images
-lesson_assignments/apache_spark/data/hd/images
-lesson_assignments/apache_spark/data/talenti/images
-data_storage_testing/data/.ipynb_checkpoints
-data_storage_testing/data/.Trash-0

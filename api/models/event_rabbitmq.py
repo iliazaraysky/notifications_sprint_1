@@ -2,6 +2,5 @@ from pydantic import BaseModel
 
 
 class Event(BaseModel):
-    service: str
-    routing_key: str
+    queue_name: str
     body: str

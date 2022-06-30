@@ -1,8 +1,10 @@
 import uvicorn
-import asyncio
 import aio_pika
-from models.event import Event
-from fastapi import FastAPI
+from models.event_rabbitmq import Event
+from db import mongodb
+from motor.motor_asyncio import AsyncIOMotorClient
+from api.v1 import rabbitmq_api, user_event_api
+from fastapi import FastAPI, status
 from fastapi.responses import ORJSONResponse
 
 
@@ -14,23 +16,18 @@ app = FastAPI(
 )
 
 
-@app.get('/publisher')
-async def publisher() -> None:
-    connection = await aio_pika.connect_robust(
-        "amqp://guest:guest@notifications-rabbitmq:5672",
-    )
+@app.on_event('startup')
+async def startup():
+    mongodb.mongo = AsyncIOMotorClient('mongodb://mongo-fastapi:27017')
 
-    async with connection:
-        routing_key = "test_queue"
 
-        channel = await connection.channel()
-        queue = await channel.declare_queue("hello")
+@app.on_event('shutdown')
+async def shutdown():
+    await mongodb.mongo.stop()
 
-        await channel.default_exchange.publish(
-            aio_pika.Message(body=f"Hello {routing_key}".encode()),
-            routing_key=queue.name,
-        )
 
+app.include_router(rabbitmq_api.router, prefix='/api/v1/rabbitmq/', tags=['rabbitmq_event'])
+app.include_router(user_event_api.router, prefix='api/v1/films/', tags=['user_event'])
 
 if __name__ == '__main__':
     uvicorn.run('main:app', host='0.0.0.0', port=8001)
