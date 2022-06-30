@@ -14,7 +14,7 @@ migrate = Migrate()
 def create_app(config=Config):
     app = Flask(__name__)
     app.config['SWAGGER'] = {
-        'title': 'Authentication Service. Sprint 6',
+        'title': 'Authentication Service. Sprint 10',
         'uiversion': 3
     }
     swagger = Swagger(app)
@@ -23,7 +23,6 @@ def create_app(config=Config):
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-
 
     from api.v1.swagger import swagger_view
     from api.v1 import VERSION_PREFIX

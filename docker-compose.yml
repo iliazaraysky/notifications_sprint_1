@@ -6,9 +6,9 @@ services:
       context: .
       dockerfile: admin_panel/Dockerfile
     ports:
-      - 8000:8000
+      - '8000:8000'
     restart: always
-    container_name: admin-panel-notification
+    container_name: notifications-admin-panel
     command: gunicorn admin_panel.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_value:/code/app/static_files/
@@ -19,34 +19,61 @@ services:
       - db
     networks:
       - notifications_networks
-  mongo-fastapi:
-    image: mongo:4.4.6
-    container_name: mongo-fastapi
+  fastapi:
+    container_name: notifications-fastapi
+    build:
+      context: .
+      dockerfile: api/Dockerfile
     ports:
-      - 27017:27017
-    restart: always
-    volumes:
-      - ./api/mongo:/mongo
-  auth:
-    build: ./auth
-    container_name: flask-auth-service
+      - '8001:8001'
+    env_file:
+      - .env
+    networks:
+      - notifications_networks
+    restart: on-failure
+  notifications-flask-auth-service:
+    build:
+      context: .
+      dockerfile: auth/Dockerfile
+    container_name: notifications-flask-auth-service
     entrypoint: >
       sh -c "python -m pytest -W ignore tests/
              flask db upgrade
              flask createsuperuser admin password123
              gunicorn wsgi_app:app --bind :5000"
+    restart: on-failure
     ports:
-      - 5000:5000
+      - '5000:5000'
+    env_file:
+      - .env
+    networks:
+      - notifications_networks
+    depends_on:
+      - db
+  mongo-fastapi:
+    image: mongo:4.4.6
+    container_name: notifications-mongo-fastapi
+    ports:
+      - '27017:27017'
+    restart: always
+    volumes:
+      - ./api/mongo:/mongo
+    networks:
+      - notifications_networks
+  redis:
+    image: redis:7.0-rc3-alpine3.15
+    container_name: notifications-redis-auth
     restart: on-failure
     env_file:
       - .env
-    depends_on:
-      - db-auth
-      - redis
+    ports:
+      - '6379:6379'
+    networks:
+      - notifications_networks
   db:
     image: postgres:13.6
     ports:
-      - 5432:5432
+      - '5432:5432'
     container_name: notifications-postgresql-database
     volumes:
       - postgres_data:/var/lib/postgresql/data/
@@ -58,24 +85,12 @@ services:
       - .env
     networks:
       - notifications_networks
-  fastapi:
-    container_name: notifications-fastapi
-    build:
-      context: .
-      dockerfile: api/Dockerfile
-    ports:
-      - 8001:8001
-    env_file:
-      - .env
-    networks:
-      - notifications_networks
-    restart: on-failure
   rabbitmq:
     container_name: notifications-rabbitmq
     image: rabbitmq:management-alpine
     ports:
-      - 5672:5672
-      - 15672:15672
+      - '5672:5672'
+      - '15672:15672'
     networks:
       - notifications_networks
 volumes:

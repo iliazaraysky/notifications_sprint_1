@@ -1,7 +1,7 @@
-FROM python:3.9-slim-buster
+FROM python:3.8.5
 RUN mkdir /app
-COPY ./requirements.txt /app
-RUN pip install --upgrade pip && pip install -r ../app/requirements.txt
+COPY ./auth/requirements.txt /app
+RUN pip install --upgrade pip && pip install -r ./app/requirements.txt
 COPY . /app
-WORKDIR /app
+WORKDIR /app/auth
 CMD ["gunicorn", "wsgi_app:app", "--bind", ":5000"]
