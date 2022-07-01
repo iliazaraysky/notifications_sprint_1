@@ -31,22 +31,22 @@ app.include_router(user_event_api.router, prefix='/api/v1/films', tags=['user_ev
 
 # Проверяет Auth сервис. Обращается по адресу.
 # Если в заголовке есть валидный токен, предоставляет доступ к контенту
-@app.middleware('http')
-async def add_process_time_header(request: Request, call_next):
-    headers = request.headers
-    auth_url = 'http://notifications-flask-auth-service:5000/auth/v1/usercheck'
-    auth_check = await check_user(auth_url, dict(headers))
-
-    if auth_check.status == 200:
-        response = await call_next(request)
-        return response
-    return Response(status_code=401)
-
-
-async def check_user(url, headers):
-    async with aiohttp.ClientSession(headers=headers) as session:
-        async with session.get(url) as response:
-            return response
+# @app.middleware('http')
+# async def add_process_time_header(request: Request, call_next):
+#     headers = request.headers
+#     auth_url = 'http://notifications-flask-auth-service:5000/auth/v1/usercheck'
+#     auth_check = await check_user(auth_url, dict(headers))
+#
+#     if auth_check.status == 200:
+#         response = await call_next(request)
+#         return response
+#     return Response(status_code=401)
+#
+#
+# async def check_user(url, headers):
+#     async with aiohttp.ClientSession(headers=headers) as session:
+#         async with session.get(url) as response:
+#             return response
 
 if __name__ == '__main__':
     uvicorn.run(

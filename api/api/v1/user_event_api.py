@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from models.event_user import UserComment, UserFilmLike
 from services.user_event_service import (UserEventService,
                                          get_user_event_service)
@@ -7,17 +7,23 @@ from services.user_event_service import (UserEventService,
 router = APIRouter()
 
 
-@router.get("/{film_id}/comments")
-async def get_film_comments():
+@router.get("/{film_id}/comments", response_model=List[UserComment])
+async def get_film_comments(
+        film_id: str,
+        comment_get: UserEventService = Depends(get_user_event_service)
+):
     """
     Все комментарии пользователей к фильму
     """
-    pass
+    get_film_comments_list = await comment_get.get_comments_list(film_id)
+    return get_film_comments_list
 
 
 @router.post("/{film_id}/add-comment")
-async def user_comment(data: UserComment,
-                       comment_post: UserEventService = Depends(get_user_event_service)):
+async def user_comment(
+        film_id: str,
+        data: UserComment,
+        comment_post: UserEventService = Depends(get_user_event_service)):
     """
     Добавляет комментарии пользователя к фильму. Обязательные поля
     - **user_id**: UUID пользователя
@@ -25,7 +31,9 @@ async def user_comment(data: UserComment,
     - **comment**: Текст комментария
     """
 
+    data.film_id = film_id
     user_comment = await comment_post.post_comment(data)
+
     return user_comment
 
 
@@ -34,7 +42,6 @@ async def get_user_like(get_like: UserEventService = Depends(get_user_event_serv
     """
     Список лайков. Общий.
     """
-
     get_user_like = await get_like.get_like_list()
     return get_user_like
 

@@ -15,18 +15,23 @@ class UserEventService:
     async def post_comment(self, comment: UserComment):
         db = self.mongo.comments
         comment = jsonable_encoder(comment)
-        await db['comment'].insert_one(comment)
+        await db['comments'].insert_one(comment)
         return {'message create': "ok"}
+
+    async def get_comments_list(self, film_id):
+        db = self.mongo.comments
+        comment = await db['comments'].find().to_list(100)
+        return comment
 
     async def get_like_list(self):
         db = self.mongo.likes
-        likes = await db['like'].find().to_list(100)
-        return likes
+        like = await db['likes'].find().to_list(100)
+        return like
 
     async def post_like(self, like: UserFilmLike):
         db = self.mongo.likes
         like = jsonable_encoder(like)
-        await db['like'].insert_one(like)
+        await db['likes'].insert_one(like)
         return {'message create': 'ok'}
 
 
