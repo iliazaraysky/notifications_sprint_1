@@ -1,5 +1,5 @@
 # Проектная работа 10 спринта
-**Ссылка на проект:** https://github.com/iliazaraysky/ugc_sprint_2
+**Ссылка на проект:** https://github.com/iliazaraysky/notifications_sprint_1
 
 **Версия не закончена, отправляю на ревью, что успел сделать. Так как не уверен, что делаю правильно**
 
