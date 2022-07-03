@@ -1,17 +1,18 @@
 import asyncio
-import logging
+import json
 
 import aio_pika
 from aio_pika.abc import AbstractIncomingMessage
 
 
 async def on_message(message: AbstractIncomingMessage) -> None:
+    data = json.loads(message.body)
     print(" [x] Received message %r" % message)
-    print("Message body is: %r" % message.body)
+    print("Message body is: %r" % data)
     await asyncio.sleep(5)
 
 
-async def main(queue_name: str) -> None:
+async def push_to(queue_name: str) -> None:
     connection = await aio_pika.connect(
         "amqp://guest:guest@localhost/",
     )
@@ -23,6 +24,5 @@ async def main(queue_name: str) -> None:
         print(" [*] Waiting for messages. To exit press CTRL+C")
         await asyncio.Future()
 
-
 if __name__ == "__main__":
-    asyncio.run(main('test_queue'))
+    asyncio.run(push_to('email'))

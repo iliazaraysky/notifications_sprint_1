@@ -69,7 +69,10 @@ def admin_required():
 def create_user():
     data = request.get_json()
     hash_password = generate_password_hash(data['password'], method='sha256')
-    new_user = User(login=data['login'], password=hash_password, is_admin=False)
+    new_user = User(login=data['login'],
+                    name=data['name'],
+                    email=data['email'],
+                    password=hash_password, is_admin=False)
     db.session.add(new_user)
     db.session.commit()
     return jsonify({'message': 'New user created'})

@@ -26,4 +26,11 @@ while ! python manage.py collectstatic --noinput 2>&1; do
    sleep 2
 done
 
+echo "Делаем миграцию приложения Tasks"
+
+while ! python manage.py migrate --noinput 2>&1; do
+   echo "Migration is in progress status"
+   sleep 2
+done
+
 exec "$@"
