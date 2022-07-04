@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import JSONField
+from django_quill.fields import QuillField
 
 
 class TemplatesByTypes(models.TextChoices):
@@ -11,7 +11,7 @@ class TemplatesByTypes(models.TextChoices):
 class Templates(models.Model):
     title = models.CharField('Заголовок шаблона рассылки', max_length=120)
     type = models.CharField('Тип рассылки', choices=TemplatesByTypes.choices, max_length=50)
-    text = models.TextField('Сообщение пользователю')
+    text = QuillField('Сообщение пользователю')
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now=True)
 
