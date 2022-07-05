@@ -9,7 +9,6 @@ services:
       - '8000:8000'
     restart: always
     container_name: notifications-admin-panel
-    command: gunicorn admin_panel.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_value:/code/app/static_files/
       - media_value:/code/app/media/
@@ -36,11 +35,6 @@ services:
       context: .
       dockerfile: auth/Dockerfile
     container_name: notifications-flask-auth-service
-    entrypoint: >
-      sh -c "python -m pytest -W ignore tests/
-             flask db upgrade
-             flask createsuperuser admin password123
-             gunicorn wsgi_app:app --bind :5000"
     restart: on-failure
     ports:
       - '5000:5000'
