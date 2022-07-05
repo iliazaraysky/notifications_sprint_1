@@ -1,17 +1,28 @@
 version: "3"
 
 services:
+  nginx:
+    container_name: notifications-nginx
+    image: nginx:latest
+    restart: on-failure
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - static_value:/var/html/static/
+      - media_value:/var/html/media/
+    ports:
+      - '80:80'
+    networks:
+      - notifications_networks
   admin-panel:
     build:
       context: .
       dockerfile: admin_panel/Dockerfile
-    ports:
-      - '8000:8000'
     restart: always
     container_name: notifications-admin-panel
     volumes:
-      - static_value:/code/app/static_files/
-      - media_value:/code/app/media/
+      - static_value:/code/static_files/
+      - media_value:/code/media/
     env_file:
       - ./admin_panel/.env
     depends_on:
@@ -24,7 +35,7 @@ services:
       context: .
       dockerfile: api/Dockerfile
     ports:
-      - '8001:8001'
+      - '8001:8000'
     env_file:
       - .env
     networks:
@@ -37,7 +48,7 @@ services:
     container_name: notifications-flask-auth-service
     restart: on-failure
     ports:
-      - '5000:5000'
+      - '5000:8000'
     env_file:
       - .env
     networks:
