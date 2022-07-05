@@ -7,8 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 dsn = {
-    'host': ('127.0.0.1'),
-    # 'host': os.getenv('DB_HOST'),
+    'host': os.getenv('DB_HOST'),
     'dbname': os.getenv('POSTGRESQL_DB'),
     'user': os.getenv('POSTGRESQL_USER'),
     'password': os.getenv('POSTGRESQL_PASSWORD'),
